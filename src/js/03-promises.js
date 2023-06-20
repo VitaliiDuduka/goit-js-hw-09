@@ -1,60 +1,44 @@
-function createPromise(position, delay) {
-  const shouldResolve = Math.random() > 0.3;
-  if (shouldResolve) {
-    // Fulfill
-  } else {
-    // Reject
+import Notiflix from 'notiflix';
+
+const firstDelay = document.querySelector('[name="delay"]');
+const stepDelay = document.querySelector('[name="step"]');
+const promisesNumber = document.querySelector('[name="amount"]');
+const submitBtn = document.querySelector('.form');
+
+submitBtn.addEventListener('submit', onSubmitClick);
+
+function onSubmitClick(event) {
+  event.preventDefault();
+  const delayValue = parseInt(firstDelay.value);
+  const stepValue = parseInt(stepDelay.value);
+  const amountValue = parseInt(promisesNumber.value);
+  for (let i = 0; i < amountValue; i += 1){
+    const promiseNumber = i + 1;
+    const currentTime = delayValue + i * stepValue;
+
+    createPromise(promiseNumber, currentTime)
+      .then(({ position, delay }) => {
+    Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`, {
+    timeout: 7000,
+  },);
+  })
+      .catch(({ position, delay }) => {
+   Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`, {
+    timeout: 7000,
+  },);
+  });
   }
 }
 
-
-// const refs = {
-//   delayInput: document.querySelector('input[name="delay"]'),
-//   stepInput: document.querySelector('input[name="step"]'),
-//   amountInput: document.querySelector('input[name="amount"]'),
-//   formEl: document.querySelector('.form'),
-// };
-
-// function createPromise(position, delay) {
-//   return new Promise((resolve, reject) => {
-//     const shouldResolve = Math.random() > 0.3;
-//     setTimeout(() => {
-//       if (shouldResolve) {
-//         resolve({ position, delay });
-//       } else {
-//         reject({ position, delay });
-//       }
-//     }, delay);
-//   });
-// }
-
-// refs.formEl.addEventListener('submit', onSubmit);
-
-// function onSubmit(event) {
-//   event.preventDefault();
-
-//   const delay = parseInt(refs.delayInput.value);
-//   const step = parseInt(refs.stepInput.value);
-//   const amount = parseInt(refs.amountInput.value);
-
-//   for (let i = 0; i < amount; i++) {
-//     const position = i + 1;
-//     const currentDelay = delay + i * step;
-
-//     createPromise(position, currentDelay)
-//       .then(({ position, delay }) => {
-//         console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-//       })
-//       .catch(({ position, delay }) => {
-//         console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-//       });
-//   }
-
-//   clearInputs();
-// }
-
-// function clearInputs() {
-//   refs.delayInput.value = '';
-//   refs.stepInput.value = '';
-//   refs.amountInput.value = '';
-// }
+function createPromise(position, delay) {
+  return new Promise((resolve, reject) => {
+    const shouldResolve = Math.random() > 0.3;
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve({ position, delay });
+      } else {
+        reject({ position, delay });
+      }
+    }, delay);
+  });
+}
